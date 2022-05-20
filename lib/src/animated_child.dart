@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/src/speed_dial_direction.dart';
 
 class AnimatedChild extends AnimatedWidget {
   final int? index;
@@ -22,6 +23,7 @@ class AnimatedChild extends AnimatedWidget {
   final ShapeBorder? shape;
   final String? heroTag;
   final bool useColumn;
+  final SpeedDialArrangement? arrangement;
   final bool switchLabelPosition;
   final EdgeInsets? margin;
 
@@ -48,6 +50,7 @@ class AnimatedChild extends AnimatedWidget {
     required this.switchLabelPosition,
     required this.useColumn,
     required this.margin,
+    this.arrangement,
     this.onLongPress,
     this.toggleChildren,
     this.shape,
@@ -153,9 +156,10 @@ class AnimatedChild extends AnimatedWidget {
     Widget _buildColumnOrRow(bool isColumn,
         {CrossAxisAlignment? crossAxisAlignment,
         MainAxisAlignment? mainAxisAlignment,
+          SpeedDialArrangement? arrangement,
         required List<Widget> children,
         MainAxisSize? mainAxisSize}) {
-      return isColumn
+      return isColumn && arrangement != SpeedDialArrangement.row
           ? Column(
               mainAxisSize: mainAxisSize ?? MainAxisSize.max,
               mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
@@ -177,6 +181,7 @@ class AnimatedChild extends AnimatedWidget {
             margin: margin,
             child: _buildColumnOrRow(
               useColumn,
+              arrangement: arrangement,
               mainAxisSize: MainAxisSize.min,
               children:
                   switchLabelPosition ? children.reversed.toList() : children,

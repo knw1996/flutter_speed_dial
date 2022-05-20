@@ -114,6 +114,9 @@ class SpeedDial extends StatefulWidget {
   /// The direction of the children. Default is [SpeedDialDirection.up]
   final SpeedDialDirection direction;
 
+  /// The arrange of the children.
+  final SpeedDialArrangement? arrangement;
+
   /// If Provided then it will replace the default Floating Action Button
   /// and will show the Widget Specified as dialRoot instead, it will also
   /// ignore backgroundColor, foregroundColor or any other property
@@ -168,6 +171,7 @@ class SpeedDial extends StatefulWidget {
     this.onOpen,
     this.onClose,
     this.direction = SpeedDialDirection.up,
+    this.arrangement,
     this.closeManually = false,
     this.renderOverlay = true,
     this.shape = const StadiumBorder(),
@@ -501,6 +505,7 @@ class _ChildrensOverlay extends StatelessWidget {
                 : null,
             btnKey: child.key,
             useColumn: widget.direction.isLeft || widget.direction.isRight,
+            arrangement: widget.arrangement,
             visible: child.visible,
             switchLabelPosition: widget.switchLabelPosition,
             backgroundColor: child.backgroundColor,
@@ -595,6 +600,7 @@ class _ChildrensOverlay extends StatelessWidget {
                   : null,
               child: _buildColumnOrRow(
                 widget.direction.isUp || widget.direction.isDown,
+                arrangement: widget.arrangement,
                 crossAxisAlignment: widget.switchLabelPosition
                     ? CrossAxisAlignment.start
                     : CrossAxisAlignment.end,
@@ -614,9 +620,10 @@ class _ChildrensOverlay extends StatelessWidget {
 Widget _buildColumnOrRow(bool isColumn,
     {CrossAxisAlignment? crossAxisAlignment,
     MainAxisAlignment? mainAxisAlignment,
+    SpeedDialArrangement? arrangement,
     required List<Widget> children,
     MainAxisSize? mainAxisSize}) {
-  return isColumn
+  return isColumn && arrangement != SpeedDialArrangement.row
       ? Column(
           mainAxisSize: mainAxisSize ?? MainAxisSize.max,
           mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,

@@ -1,3 +1,6 @@
+
+enum SpeedDialArrangement { column, row }
+
 enum SpeedDialDirection { up, down, left, right }
 
 extension EnumExtension on SpeedDialDirection {
