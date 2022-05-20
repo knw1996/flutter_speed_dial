@@ -496,12 +496,7 @@ class _ChildrensOverlay extends StatelessWidget {
             ),
             index: index,
             margin: widget.spaceBetweenChildren != null
-                ? EdgeInsets.fromLTRB(
-                    widget.direction.isRight ? widget.spaceBetweenChildren! : 0,
-                    widget.direction.isDown ? widget.spaceBetweenChildren! : 0,
-                    widget.direction.isLeft ? widget.spaceBetweenChildren! : 0,
-                    widget.direction.isUp ? widget.spaceBetweenChildren! : 0,
-                  )
+                ? getChildrenMargin()
                 : null,
             btnKey: child.key,
             useColumn: widget.direction.isLeft || widget.direction.isRight,
@@ -534,6 +529,32 @@ class _ChildrensOverlay extends StatelessWidget {
         .toList()
         .reversed
         .toList();
+  }
+
+  EdgeInsets getChildrenMargin(){
+    switch (widget.arrangement) {
+      case SpeedDialArrangement.column:
+        return EdgeInsets.fromLTRB(
+          0,
+          widget.direction.isDown ? widget.spaceBetweenChildren! : 0,
+          0,
+          !widget.direction.isDown ? widget.spaceBetweenChildren! : 0,
+        );
+      case SpeedDialArrangement.row:
+        return EdgeInsets.fromLTRB(
+          widget.direction.isRight ? widget.spaceBetweenChildren! : 0,
+          0,
+          !widget.direction.isRight ? widget.spaceBetweenChildren! : 0,
+          0,
+        );
+      default:
+        return EdgeInsets.fromLTRB(
+          widget.direction.isRight ? widget.spaceBetweenChildren! : 0,
+          widget.direction.isDown ? widget.spaceBetweenChildren! : 0,
+          widget.direction.isLeft ? widget.spaceBetweenChildren! : 0,
+          widget.direction.isUp ? widget.spaceBetweenChildren! : 0,
+        );
+    }
   }
 
   @override
@@ -643,8 +664,8 @@ Widget _buildColumnOrRow(BuildContext context, bool isColumn,
           children: children,
         )
       : Row(
-          mainAxisSize: mainAxisSize ?? MainAxisSize.min,
-          mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
+          mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+          mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.center,
           crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
           children: children,
         );
