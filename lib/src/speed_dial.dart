@@ -556,30 +556,7 @@ class _ChildrensOverlay extends StatelessWidget {
                       : widget.direction.isRight
                           ? Alignment.centerLeft
                           : Alignment.center,
-          offset: widget.direction.isDown
-              ? Offset(
-                  (widget.switchLabelPosition ||
-                              dialKey.globalPaintBounds == null
-                          ? 0
-                          : dialKey.globalPaintBounds!.size.width) +
-                      max(widget.childrenButtonSize.height - 56, 0) / 2,
-                  dialKey.globalPaintBounds!.size.height)
-              : widget.direction.isUp
-                  ? Offset(
-                      (widget.switchLabelPosition ||
-                                  dialKey.globalPaintBounds == null
-                              ? 0
-                              : dialKey.globalPaintBounds!.size.width) +
-                          max(widget.childrenButtonSize.width - 56, 0) / 2,
-                      0)
-                  : widget.direction.isLeft
-                      ? Offset(
-                          -10.0, dialKey.globalPaintBounds!.size.height / 2)
-                      : widget.direction.isRight ||
-                              dialKey.globalPaintBounds == null
-                          ? Offset(dialKey.globalPaintBounds!.size.width + 12,
-                              dialKey.globalPaintBounds!.size.height / 2)
-                          : const Offset(-10.0, 0.0),
+          offset: getOffset(context),
           link: layerLink,
           showWhenUnlinked: false,
           child: Material(
@@ -599,6 +576,7 @@ class _ChildrensOverlay extends StatelessWidget {
                     )
                   : null,
               child: _buildColumnOrRow(
+                context,
                 widget.direction.isUp || widget.direction.isDown,
                 arrangement: widget.arrangement,
                 crossAxisAlignment: widget.switchLabelPosition
@@ -615,9 +593,43 @@ class _ChildrensOverlay extends StatelessWidget {
       ],
     );
   }
+
+  Offset getOffset(BuildContext context){
+    final renderBox = dialKey.currentContext?.findRenderObject() as RenderBox?;
+    Offset? position;
+    if (renderBox != null) {
+      position = renderBox.localToGlobal(Offset.zero);
+    }
+    switch (widget.direction) {
+      case SpeedDialDirection.up:
+        return Offset(
+            widget.arrangement == SpeedDialArrangement.row && position != null
+                ? MediaQuery.of(context).size.width - position.dx
+                : (widget.switchLabelPosition ||
+                            dialKey.globalPaintBounds == null
+                        ? 0
+                        : dialKey.globalPaintBounds!.size.width) +
+                    max(widget.childrenButtonSize.width - 56, 0) / 2,
+            0);
+      case SpeedDialDirection.down:
+        return Offset(
+            (widget.switchLabelPosition || dialKey.globalPaintBounds == null
+                    ? 0
+                    : dialKey.globalPaintBounds!.size.width) +
+                max(widget.childrenButtonSize.height - 56, 0) / 2,
+            dialKey.globalPaintBounds!.size.height);
+      case SpeedDialDirection.left:
+        return Offset(-10.0, dialKey.globalPaintBounds!.size.height / 2);
+      case SpeedDialDirection.right:
+        return dialKey.globalPaintBounds == null
+            ? Offset(dialKey.globalPaintBounds!.size.width + 12,
+                dialKey.globalPaintBounds!.size.height / 2)
+            : const Offset(-10.0, 0.0);
+    }
+  }
 }
 
-Widget _buildColumnOrRow(bool isColumn,
+Widget _buildColumnOrRow(BuildContext context, bool isColumn,
     {CrossAxisAlignment? crossAxisAlignment,
     MainAxisAlignment? mainAxisAlignment,
     SpeedDialArrangement? arrangement,
@@ -631,7 +643,7 @@ Widget _buildColumnOrRow(bool isColumn,
           children: children,
         )
       : Row(
-          mainAxisSize: mainAxisSize ?? MainAxisSize.max,
+          mainAxisSize: mainAxisSize ?? MainAxisSize.min,
           mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
           crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
           children: children,
