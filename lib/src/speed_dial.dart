@@ -137,6 +137,9 @@ class SpeedDial extends StatefulWidget {
   /// This is the animation of the child of the FAB, if specified it will animate b/w this
   final Curve? animationCurve;
 
+  /// if floatingLocationChanged is true, the overlayEntry will popUp after 350 milliseconds
+  final bool floatingLocationChanged;
+
   const SpeedDial({
     Key? key,
     this.children = const [],
@@ -155,6 +158,7 @@ class SpeedDial extends StatefulWidget {
     this.overlayColor,
     this.tooltip,
     this.heroTag,
+    this.floatingLocationChanged = false,
     this.animatedIcon,
     this.animatedIconTheme,
     this.icon,
@@ -261,7 +265,7 @@ class _SpeedDialState extends State<SpeedDial>
     }
   }
 
-  toggleOverlay() {
+  toggleOverlay() async {
     if (_open) {
       _controller.reverse().whenComplete(() {
         overlayEntry?.remove();
@@ -276,6 +280,9 @@ class _SpeedDialState extends State<SpeedDial>
         // overlayEntry?.remove();
         // backgroundOverlay?.remove();
         return;
+      }
+      if(widget.floatingLocationChanged){
+        await Future.delayed(const Duration(milliseconds: 350));
       }
       overlayEntry = OverlayEntry(
         builder: (ctx) => _ChildrensOverlay(
